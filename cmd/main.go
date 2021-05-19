@@ -3,18 +3,20 @@ package main
 import (
 	"os"
 
-	TodoP "github.com/Yujiman/GoTodo"
+	todo "github.com/Yujiman/GoTodo"
 	"github.com/Yujiman/GoTodo/pkg/handler"
 	"github.com/Yujiman/GoTodo/pkg/repository"
 	"github.com/Yujiman/GoTodo/pkg/service"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 
-	"github.com/spf13/viper"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
+
+	logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("errors init configs: %s", err.Error())
 	}
@@ -39,15 +41,15 @@ func main() {
 	service := service.NewService(rep)
 	handler := handler.NewHandler(service)
 
-	srv := new(TodoP.Server)
+	srv := new(todo.Server)
 	if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
 		logrus.Fatal("Error running  http server: ", err.Error())
 	}
 }
 
 func initConfig() error {
-	viper.AddConfigPath("config")
-	viper.SetConfigName("config")
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("configs")
 
 	return viper.ReadInConfig()
 }

@@ -1,4 +1,4 @@
-package TodoP
+package todo
 
 import (
 	"context"
