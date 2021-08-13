@@ -6,11 +6,11 @@ import (
 )
 
 // errors for response
-type error struct {
+type errorResponse struct {
 	Message string `json:"massage"`
 }
 
 func newErrorResponse(c *gin.Context, statusCode int, message string) {
 	logrus.Error(message)
-	c.AbortWithStatusJSON(statusCode, error{message})
+	c.AbortWithStatusJSON(statusCode, errorResponse{message})
 }

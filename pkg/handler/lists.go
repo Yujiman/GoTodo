@@ -1,16 +1,30 @@
 package handler
 
 import (
+	_ "github.com/Yujiman/GoTodo"
+	todo "github.com/Yujiman/GoTodo"
+	"github.com/gin-gonic/gin"
 	"net/http"
-
-	"github.com/gin-gonic/gin")
-
+)
 
 func (h *Handler) createList(c *gin.Context) {
-	//test data
-	id, _  := c.Get(userCtx)
+	id, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	var input todo.TodoList
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	id, err = h.services.TodoList.Create(id, input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id" :id,
+		"id": id,
 	})
 }
 func (h *Handler) getAllLists(c *gin.Context) {
