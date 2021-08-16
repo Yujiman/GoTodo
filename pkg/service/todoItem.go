@@ -29,3 +29,7 @@ func (s *TodoItemService) GetAll(userId, listId int) ([]todo.TodoItem, error) {
 func (s *TodoItemService) GetById(userId, itemId int) (todo.TodoItem, error) {
 	return s.repo.GetById(userId, itemId)
 }
+
+func (s *TodoItemService) Update(userId, itemId int, input todo.UpdatedItemInput) error {
+	return s.repo.Update(userId, itemId, input)
+}

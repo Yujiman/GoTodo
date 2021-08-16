@@ -86,7 +86,10 @@ func (h *Handler) updateList(c *gin.Context) {
 		return
 	}
 
-	h.services.TodoList.Update(userId, listId, input)
+	if err := h.services.TodoList.Update(userId, listId, input); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "ok",
