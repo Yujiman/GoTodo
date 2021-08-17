@@ -41,6 +41,7 @@ func (t *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
 
 	return id, tx.Commit()
 }
+
 func (t *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
 	var lists []todo.TodoList
 
