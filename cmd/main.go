@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"os/signal"
+	"syscall"
 
 	todo "github.com/Yujiman/GoTodo"
 	"github.com/Yujiman/GoTodo/pkg/handler"
@@ -16,7 +18,6 @@ import (
 
 func main() {
 
-	// logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("errors init configs: %s", err.Error())
 	}
@@ -42,9 +43,19 @@ func main() {
 	handler := handler.NewHandler(service)
 
 	srv := new(todo.Server)
-	if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
-		logrus.Fatal("Error running  http server: ", err.Error())
-	}
+	//Graceful Shutdown
+	go func() {
+		if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
+			logrus.Fatal("Error running  http server: ", err.Error())
+		}
+	}()
+	logrus.Println("Todo started")
+
+	quite := make(chan os.Signal, 1)
+	signal.Notify(quite, syscall.SIGTERM, syscall.SIGINT)
+	<-quite
+
+	logrus.Println("Todo shutting down ")
 }
 
 func initConfig() error {
